@@ -21,7 +21,7 @@ function closeModal() {
 </script>
 
 <template>
-  <dialog ref="dialog" class="bg-white rounded-md p-4">
+  <dialog ref="dialog" class="bg-white rounded-md p-4 w-96">
     <div class="relative p-4 bg-white rounded-md">
       <button
           class="absolute top-2 right-2 inline-flex items-center justify-center w-8 h-8 border-2 border-black rounded-full transition-colors duration-150 hover:bg-gray-300 focus:shadow-outline"
@@ -30,8 +30,30 @@ function closeModal() {
         x
       </button>
       <div class="mt-10">
-        <p>Greetings, one and all!</p>
-        <form method="dialog" class="mt-4">
+        <h2 class="text-xl">Add a new Movie</h2>
+        <form method="dialog" class="mt-4 flex flex-col gap-4">
+          <label for="name" class="text-sm font-medium text-gray-700">Movie name:</label>
+          <input type="text" id="name" placeholder="Enter the movie name" class="border border-gray-300 rounded-md p-2" required>
+
+          <label for="description" class="text-sm font-medium text-gray-700">Movie description:</label>
+          <textarea id="description" placeholder="Enter the movie description" class="border border-gray-300 rounded-md p-2"/>
+
+          <label for="image" class="text-sm font-medium text-gray-700">Movie image:</label>
+          <input type="text" id="image" placeholder="Enter the movie image-path" class="border border-gray-300 rounded-md p-2">
+
+          <label for="genres">Choose genres:</label>
+          <select name="genres" id="genres" multiple class="border border-gray-300 rounded-md p-2" required>
+            <option value="">--Please choose an option--</option>
+            <option value="drama">Drama</option>
+            <option value="action">Action</option>
+            <option value="crime">Crime</option>
+          </select>
+
+          <div class="flex flex-row gap-2">
+            <label for="theaters" class="text-sm font-medium text-gray-700">Is in theaters:</label>
+            <input type="checkbox" id="theaters" class="mr-2">
+          </div>
+
           <button class="bg-blue-500 text-white px-4 py-2 rounded-md">send</button>
         </form>
       </div>
