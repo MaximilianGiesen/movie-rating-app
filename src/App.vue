@@ -4,6 +4,22 @@ import { StarIcon } from "@heroicons/vue/24/solid";
 import { ref } from "vue";
 
 const movies = ref(items);
+const formData = ref({
+  name: '',
+  description: '',
+  image: '',
+  genres: [],
+  rating: 0,
+  inTheaters: false,
+});
+
+const errors = ref({
+  name: "",
+  description: "",
+  image: "",
+  genres: "",
+  inTheaters: "",
+});
 
 function updateRating(movieIndex, rating) {
   movies.value[movieIndex].rating = rating;
@@ -18,6 +34,31 @@ function openModal() {
 function closeModal() {
   dialog.value.close();
 }
+
+function validateForm(e) {
+  e.preventDefault();
+
+  errors.value = {
+    name: "",
+    description: "",
+    image: "",
+    genres: "",
+    inTheaters: "",
+  };
+
+  if (!formData.value.name) {
+    errors.value.name = "Please enter a movie name";
+  }
+
+  if (!formData.value.genres.length) {
+    errors.value.genres = "Please choose at least one genre";
+  }
+
+  else {
+    closeModal()
+  }
+
+}
 </script>
 
 <template>
@@ -31,30 +72,65 @@ function closeModal() {
       </button>
       <div class="mt-10">
         <h2 class="text-xl">Add a new Movie</h2>
-        <form method="dialog" class="mt-4 flex flex-col gap-4">
+        <form method="dialog" class="mt-4 flex flex-col gap-4" @submit.prevent="validateForm">
           <label for="name" class="text-sm font-medium text-gray-700">Movie name:</label>
-          <input type="text" id="name" placeholder="Enter the movie name" class="border border-gray-300 rounded-md p-2" required>
+          <input
+              type="text"
+              id="name"
+              v-model="formData.name"
+              placeholder="Enter the movie name"
+              :class="[
+                'border rounded-md p-2',
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              ]"
+          >
+          <p v-if="errors.name" class="text-red-500">{{ errors.name }}</p>
 
           <label for="description" class="text-sm font-medium text-gray-700">Movie description:</label>
-          <textarea id="description" placeholder="Enter the movie description" class="border border-gray-300 rounded-md p-2"/>
+          <textarea
+              id="description"
+              v-model="formData.description"
+              placeholder="Enter the movie description"
+              class="border rounded-md p-2 border-gray-300"
+          ></textarea>
 
           <label for="image" class="text-sm font-medium text-gray-700">Movie image:</label>
-          <input type="text" id="image" placeholder="Enter the movie image-path" class="border border-gray-300 rounded-md p-2">
+          <input
+              type="text"
+              id="image"
+              v-model="formData.image"
+              placeholder="Enter the movie image-path"
+              class="border rounded-md p-2 border-gray-300"
+          >
 
           <label for="genres">Choose genres:</label>
-          <select name="genres" id="genres" multiple class="border border-gray-300 rounded-md p-2" required>
+          <select
+              name="genres"
+              v-model="formData.genres"
+              id="genres" multiple
+              :class="[
+                'border rounded-md p-2',
+                errors.genres ? 'border-red-500' : 'border-gray-300'
+              ]"
+          >
             <option value="">--Please choose an option--</option>
             <option value="drama">Drama</option>
             <option value="action">Action</option>
             <option value="crime">Crime</option>
           </select>
+          <p v-if="errors.genres" class="text-red-500">{{ errors.genres }}</p>
 
           <div class="flex flex-row gap-2">
             <label for="theaters" class="text-sm font-medium text-gray-700">Is in theaters:</label>
-            <input type="checkbox" id="theaters" class="mr-2">
+            <input
+                type="checkbox"
+                id="theaters"
+                v-model="formData.inTheaters"
+                class="mr-2"
+            >
           </div>
 
-          <button class="bg-blue-500 text-white px-4 py-2 rounded-md">send</button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">send</button>
         </form>
       </div>
     </div>
