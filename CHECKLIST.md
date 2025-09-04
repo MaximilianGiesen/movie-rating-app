@@ -1,4 +1,17 @@
-- The application uses Vue.js template syntax to display the movies.
-- The movies are rendered using a `v-for` loop.
-- The name, description, genres and image of each movie is displayed.
-- The rating of the movie is represented by stars, with a maximum of 5 stars.
+- You created a form.
+- The form includes a required input text for `name`.
+- The form includes a textarea for `description`.
+- The form includes an input text for `image`.
+- The form includes a dropdown for `genres`, and it is required.
+- Multiple `genres` can be selected.
+- The form includes a checkbox for `inTheaters`.
+- Is the form validated upon submit. 
+- Is the movie added to the list once the form is submitted and valid.
+- The form hidden by default.
+- The form is cleared out and hidden after submitting a valid movie.
+- A button to show the form is present.
+- On clicking that button the form is shown.
+- A cancel button is present on the form.
+- Clicking the cancel button hides the form.
+- Clicking the cancel button clears the form.
+- Clicking the cancel button clears all errors.
