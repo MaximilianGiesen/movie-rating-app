@@ -1,34 +1,31 @@
 ---
 difficulty: 1
 training: true
-chapter: "Chapter 1: Vue.js Essentials"
+chapter: "Chapter 2: Vue.js Components"
 tags: vue
 ---
 
-# Code a Create Movie Form
+# Extract Components
 
 # Challenge Description
-In this challenge, let's give users the ability to add new movies in the Movie Rating App. 
+
+So far, so good. 💪 In this challenge, let's extract some parts of our app into components.
+This is good for keeping the code clean and organized code and allows us to abstract logic for reuse.
 
 ## Requirements
-- Create an "Add Movie" button
-- Show a form for creating new movies when the button is clicked
-- Include the following fields on the form:
-  - Name: text input & required
-  - Description: textarea
-  - Image: text input
-  - Genre: dropdown & required & user can select multiple
-  - Is in theaters: checkbox 
-- Validate the form on submit
-- Once submitted and valid, add the movie to the list
-- Clear and hide the form after the movie is added
-- Add a cancel button to the form
-  - Clicking the cancel button should clean up the form, and any error that it might have.
-  - Clicking the cancel button should hide the form for the user.
 
-> 💡 HINT: You can make up any genres you like
-
-> 💡 HINT: You can visit [imdb.com](https://imdb.com) to find movie descriptions, images, etc for testing your form
+- Move the current template for a movie into the `MovieItem.vue` component.
+- Replace the current part of our template where the movie is displayed with the `MovieItem.vue` component
+- Create a computed property `notRated` in `MovieItem.vue` that is true when the rating is NOT defined as a positive number.
+- The `MovieItem.vue` component should have the following props:
+  - `movie`: It should receive the movie object.
+- Create `3` custom events in the `MovieItem.vue` component.
+  - `edit`: Should be dispatched when the user clicks the `edit` button with the `id` as parameter
+  - `remove`: Should be dispatched when the user clicks the `remove` button with the `id` as parameter
+  - `update:rating`: Should be dispatched when the user updates the rating with the `id` and the new `rating` as parameter
+- Change the behavior of the `updateRating` to accept the movie `id` instead of the `movieIndex`
+- Change the behavior of the `removeMovie` to accept the movie `id` instead of the `movieIndex`
+- Change the behavior of the `editMovie` to accept the movie `id` instead of the `movieIndex`
 
 ## Other Considerations
 
@@ -39,4 +36,4 @@ In this challenge, let's give users the ability to add new movies in the Movie R
 
 This is an example of what the functionality should look like for the completed exercise. If you’d like to mimic this style, feel free to do so, but it is not required.
 
-![Finished app in this challenge](https://images.certificates.dev/EF54nfw.gif)
+![Finished app in this challenge](https://images.certificates.dev/FwQdY32.gif)

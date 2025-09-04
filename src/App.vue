@@ -1,16 +1,31 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
+import MovieItem from "./MovieItem.vue";
 /*
- This is an Icon that you can use to represent the stars if you like
- otherwise you could just use a simple ⭐️ emoji, or * character.
+These are Icons that you can use, of course you can use other ones if you prefer.
 */
-import { StarIcon } from "@heroicons/vue/24/solid";
 import { items } from "./movies.json";
+import {PencilIcon, StarIcon, TrashIcon} from "@heroicons/vue/24/solid";
 
 const movies = ref(items);
 
 function updateRating(movieIndex, rating) {
   movies.value[movieIndex].rating = rating;
+}
+function removeMovie(movieIndex) {
+  movies.value = movies.value.filter((movie, index) => index !== movieIndex);
+}
+function editMovie(movieIndex) {
+  const movie = movies.value[movieIndex];
+
+  form.id = movie.id;
+  form.name = movie.name;
+  form.description = movie.description;
+  form.image = movie.image;
+  form.inTheaters = movie.inTheaters;
+  form.genres = movie.genres;
+
+  showForm();
 }
 
 const errors = reactive({
@@ -21,11 +36,12 @@ const errors = reactive({
   genres: null,
 });
 const form = reactive({
+  id: null,
   name: null,
   description: null,
   image: null,
   inTheaters: false,
-  genres: [],
+  genres: null,
 });
 const validations = reactive({
   name: "required",
@@ -61,6 +77,38 @@ function validate() {
   return valid;
 }
 
+function saveMovie() {
+  if (form.id) {
+    updateMovie();
+  } else {
+    addMovie();
+  }
+}
+
+function updateMovie() {
+  if (validate()) {
+    const movie = {
+      id: form.id,
+      name: form.name,
+      description: form.description,
+      image: form.image,
+      genres: form.genres,
+      inTheaters: form.inTheaters,
+      rating: 0,
+    };
+
+    movies.value = movies.value.map((m) => {
+      if (m.id === movie.id) {
+        movie.rating = m.rating;
+        return movie;
+      }
+      return m;
+    });
+
+    hideForm();
+  }
+}
+
 function addMovie() {
   if (validate()) {
     const movie = {
@@ -70,7 +118,7 @@ function addMovie() {
       image: form.image,
       genres: form.genres,
       inTheaters: form.inTheaters,
-      rating: null,
+      rating: 0,
     };
     movies.value.push(movie);
     hideForm();
@@ -78,10 +126,11 @@ function addMovie() {
 }
 
 function cleanUpForm() {
+  form.id = null;
   form.name = null;
   form.description = null;
   form.image = null;
-  form.genres = [];
+  form.genres = null;
   form.inTheaters = false;
   clearErrors();
 }
@@ -95,7 +144,6 @@ function clearErrors() {
 }
 
 const showMovieForm = ref(false);
-
 function hideForm() {
   showMovieForm.value = false;
   cleanUpForm();
@@ -104,19 +152,37 @@ function hideForm() {
 function showForm() {
   showMovieForm.value = true;
 }
+
+const averageRating = computed(() => {
+  const avg = movies.value
+    .map((movie) => parseInt(movie.rating || 0))
+    .reduce((a, b) => a + b, 0);
+
+  return Number(avg / movies.value.length).toFixed(1);
+});
+
+const totalMovies = computed(() => {
+  return movies.value.length;
+});
+
+function removeRatings() {
+  movies.value = movies.value.map((movie) => {
+    movie.rating = 0;
+    return movie;
+  });
+}
 </script>
 
 <template>
   <div class="app">
     <div v-if="showMovieForm" class="modal-wrapper">
       <div class="modal-wrapper-inner">
-        <form @submit.prevent="addMovie">
+        <form @submit.prevent="saveMovie">
           <div class="movie-form-input-wrapper">
             <label for="name">Name</label>
             <input
               type="text"
               name="name"
-              id="name"
               v-model="form.name"
               class="movie-form-input"
             />
@@ -125,8 +191,8 @@ function showForm() {
           <div class="movie-form-input-wrapper">
             <label for="description">Description</label>
             <textarea
+              type="text"
               name="description"
-              id="description"
               v-model="form.description"
               class="movie-form-textarea"
             />
@@ -137,7 +203,6 @@ function showForm() {
             <input
               type="text"
               name="image"
-              id="image"
               v-model="form.image"
               class="movie-form-input"
             />
@@ -147,7 +212,6 @@ function showForm() {
             <label for="genre">Genres</label>
             <select
               name="genre"
-              id="genre"
               v-model="form.genres"
               class="movie-form-input"
               multiple
@@ -165,10 +229,9 @@ function showForm() {
             </span>
           </div>
           <div class="movie-form-input-wrapper">
-            <label for="inTheaters" class="movie-form-checkbox-label">
+            <label for="genre" class="movie-form-checkbox-label">
               <input
                 type="checkbox"
-                id="inTheaters"
                 v-model="form.inTheaters"
                 :true-value="true"
                 :false-value="false"
@@ -185,14 +248,28 @@ function showForm() {
               Cancel
             </button>
 
-            <button type="submit" class="button-primary">Create</button>
+            <button type="submit" class="button-primary">
+              <span v-if="form.id">Update</span>
+              <span v-else>Create</span>
+            </button>
           </div>
         </form>
       </div>
     </div>
     <div class="movie-actions-list-wrapper">
+      <div class="movie-actions-list-info">
+        <span>Total Movies: {{ totalMovies }}</span>
+        <span> / </span>
+        <span>Average Rating: {{ averageRating }}</span>
+      </div>
       <div class="flex-spacer"></div>
       <div class="movie-actions-list-actions">
+        <button
+          class="self-end movie-actions-list-action-button button-primary justify-self-end"
+          @click="removeRatings"
+        >
+          Remove Ratings
+        </button>
         <button
           class="movie-actions-list-action-button"
           :class="{
@@ -207,69 +284,16 @@ function showForm() {
       </div>
     </div>
     <div class="movie-list">
-      <div
-        class="movie-item"
-        v-for="(movie, movieIndex) in movies"
+      <MovieItem
+        v-for="(movie, index) in movies"
+        :movie
+        :rating
         :key="movie.id"
-      >
-        <div class="movie-item-image-wrapper">
-          <div class="movie-item-star-wrapper">
-            <StarIcon
-              class="movie-item-star-rating-icon"
-              :class="[movie.rating ? 'text-yellow-500' : 'text-gray-500']"
-            />
-            <div class="movie-item-star-content-wrapper">
-              <span
-                v-if="movie.rating"
-                class="movie-item-star-content-rating-rated"
-              >
-                {{ movie.rating }}
-              </span>
-              <span v-else class="movie-item-star-content-rating-not-rated">
-                -
-              </span>
-            </div>
-          </div>
-          <img :src="movie.image" class="movie-item-image" alt="" />
-        </div>
-
-        <div class="movie-item-content-wrapper">
-          <div class="movie-item-title-wrapper">
-            <h3 class="movie-item-title">{{ movie.name }}</h3>
-            <div class="movie-item-genres-wrapper">
-              <span
-                v-for="genre in movie.genres"
-                :key="`${movie.id}-${genre}`"
-                class="movie-item-genre-tag"
-                >{{ genre }}</span
-              >
-            </div>
-          </div>
-          <div class="movie-item-description-wrapper">
-            <p class="movie-item-description">{{ movie.description }}</p>
-          </div>
-          <div class="movie-item-rating-wrapper">
-            <span class="movie-item-rating-text">
-              Rating: ({{ movie.rating }}/5)
-            </span>
-
-            <div class="movie-item-star-icon-wrapper">
-              <button
-                v-for="star in 5"
-                :key="star"
-                class="movie-item-star-icon-button"
-                :class="[
-                  star <= movie.rating ? 'text-yellow-500' : 'text-gray-500',
-                ]"
-                :disabled="star === movie.rating"
-                @click="updateRating(movieIndex, star)"
-              >
-                <StarIcon class="movie-item-star-icon" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+        @update:rating="updateRating(index, $event)"
+        @remove="removeMovie(index)"
+        @edit="editMovie(index)"
+      />
     </div>
+
   </div>
 </template>

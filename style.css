@@ -59,6 +59,10 @@
     @apply flex items-center justify-between w-full max-w-7xl px-8;
 }
 
+.movie-actions-list-info {
+    @apply flex items-center justify-center space-x-8 text-white text-xl;
+}
+
 .movie-actions-list-actions {
     @apply flex items-center justify-between space-x-8;
 }
@@ -68,7 +72,7 @@
 }
 
 .movie-list {
-    @apply flex flex-wrap items-center justify-between max-w-7xl overflow-scroll h-[860px];
+    @apply flex flex-wrap items-center justify-between max-w-7xl h-[860px];
 }
 
 .movie-item {
@@ -116,7 +120,7 @@
 }
 
 .movie-item-description-wrapper {
-    @apply h-24 overflow-scroll flex-1;
+    @apply h-24 flex-1;
 }
 
 .movie-item-description {
@@ -149,6 +153,19 @@
 
 .movie-item-star-icon {
     @apply h-5 w-5;
+}
+
+
+.movie-item-actions-list-wrapper {
+    @apply group-hover:flex shrink-0 hidden items-center justify-end space-x-2;
+}
+
+.movie-item-action-edit-button {
+    @apply rounded-full bg-gray-200 p-3 text-gray-800 hover:text-white hover:bg-indigo-500;
+}
+
+.movie-item-action-remove-button {
+    @apply rounded-full bg-gray-200 p-3 text-gray-800 hover:text-white hover:bg-red-500;
 }
 
 .flex-spacer {
