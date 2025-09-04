@@ -4,6 +4,7 @@ import { StarIcon } from "@heroicons/vue/24/solid";
 import { ref } from "vue";
 
 const movies = ref(items);
+
 const formData = ref({
   name: '',
   description: '',
@@ -32,6 +33,22 @@ function openModal() {
 }
 
 function closeModal() {
+  errors.value = {
+    name: "",
+    description: "",
+    image: "",
+    genres: "",
+    inTheaters: "",
+  };
+
+  formData.value = {
+    name: '',
+    description: '',
+    image: '',
+    genres: [],
+    rating: 0,
+    inTheaters: false,
+  }
   dialog.value.close();
 }
 
@@ -55,10 +72,69 @@ function validateForm(e) {
   }
 
   else {
-    closeModal()
+    addMovie();
+    closeModal();
   }
 
 }
+
+function addMovie() {
+  const newMovie = {
+    name: formData.value.name,
+    description: formData.value.description,
+    image: formData.value.image,
+    genres: formData.value.genres,
+    rating: 0,
+    inTheaters: formData.value.inTheaters,
+  };
+
+  movies.value.push(newMovie);
+}
+
+function deleteMovie(movieIndex) {
+  movies.value.splice(movieIndex, 1);
+}
+
+const averageRating = () => {
+  let sum = 0;
+
+  for(let i = 0; i < movies.value.length; i++) {
+    sum += movies.value[i].rating;
+  }
+  let avg = sum / movies.value.length;
+  avg = Math.round(avg * 10) / 10;
+
+  return avg;
+}
+
+const editingIndex = ref(null);
+
+function editMovie(movie, index) {
+  formData.value = {
+    name: movie.name,
+    description: movie.description,
+    image: movie.image,
+    genres: [...movie.genres],
+    rating: movie.rating,
+    inTheaters: movie.inTheaters,
+  };
+  editingIndex.value = index;
+  openModal();
+}
+
+
+function updateMovie() {
+  const i = editingIndex.value;
+  if (i == null || !movies.value[i]) return;
+
+  movies.value[i] = {
+    ...movies.value[i],
+    ...formData.value,
+  };
+
+  closeModal();
+}
+
 </script>
 
 <template>
@@ -113,7 +189,6 @@ function validateForm(e) {
                 errors.genres ? 'border-red-500' : 'border-gray-300'
               ]"
           >
-            <option value="">--Please choose an option--</option>
             <option value="drama">Drama</option>
             <option value="action">Action</option>
             <option value="crime">Crime</option>
@@ -129,19 +204,27 @@ function validateForm(e) {
                 class="mr-2"
             >
           </div>
-
-          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">send</button>
+          <div class="justify-between flex flex-row gap-2">
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md" @click="closeModal()">cancel</button>
+            <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="updateMovie()">update</button>
+          </div>
         </form>
       </div>
     </div>
   </dialog>
-  <div class="h-screen flex items-center justify-center space-x-4">
-    <div class="absolute top-4 right-8">
+  <p class="bg-dark:bg-gray-900 text-center text-white p-4">
+    Total Movies: {{ movies.length }}
+  </p>
+  <p class="bg-dark:bg-gray-900 text-center text-white p-4">
+    Average Rating: {{ averageRating() }} / 5
+  </p>
+  <div class="h-screen flex flex-cols-3 items-center justify-center space-x-4">
+    <div class="absolute top-8 right-8">
       <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="openModal()">
         Add movie
       </button>
     </div>
-    <div class="flex flex-row gap-5">
+    <div class="grid grid-cols-3 gap-5">
       <div
           v-for="(movie, movieIndex) in movies"
           :key="movie.id"
@@ -163,7 +246,6 @@ function validateForm(e) {
                 v-else
                 class="w-16 h-16 text-gray-300"
             />
-
             <!-- Text in der Mitte -->
             <span
                 class="absolute inset-0 flex items-center justify-center text-white font-bold"
@@ -191,21 +273,28 @@ function validateForm(e) {
             <span>Rating: ( {{ movie.rating }} / 5 )</span>
           </div>
 
-          <div class="flex flex-row gap-1 py-3">
-            <button
-                v-for="star in 5"
-                :key="star"
-                :class="
+          <div class="flex flex-row gap-1 py-3 justify-between">
+            <div>
+              <button
+                  v-for="star in 5"
+                  :key="star"
+                  :class="
                 star <= movie.rating
                   ? 'text-yellow-500'
                   : 'text-gray-500'
               "
-                :disabled="star === movie.rating"
-                @click="updateRating(movieIndex, star)"
-            >
-              <StarIcon class="w-5 h-5 inline-block" />
-            </button>
+                  :disabled="star === movie.rating"
+                  @click="updateRating(movieIndex, star)"
+              >
+                <StarIcon class="w-5 h-5 inline-block" />
+              </button>
+            </div>
+            <div>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded-md mr-2" @click="deleteMovie(movieIndex)">Remove</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded-md" @click="editMovie(movie, movieIndex)">edit</button>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
