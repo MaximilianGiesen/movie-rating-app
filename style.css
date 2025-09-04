@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.app {
+    @apply max-w-full flex items-center justify-center h-screen mx-auto;
+}
+
+.movie-list {
+    @apply flex items-center justify-center space-x-4;
+}
+
+.movie-item {
+    @apply w-96 h-auto bg-white rounded-md flex flex-col items-center justify-start overflow-hidden shadow-2xl;
+}
+
+.movie-item-image-wrapper {
+    @apply h-[520px] overflow-hidden w-full relative;
+}
+
+.movie-item-image {
+    @apply object-cover object-center h-[600px];
+}
+
+.movie-item-info-wrapper {
+    @apply p-5 min-h-64 space-y-2;
+}
+
+.movie-item-title {
+    @apply text-2xl font-semibold;
+}
+
+.movie-genres-wrapper {
+    @apply flex flex-row space-x-1;
+}
+
+.genre {
+    @apply bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded-full;
+}
+
+.movie-item-rating-wrapper {
+    @apply flex flex-row space-x-1;
+}
