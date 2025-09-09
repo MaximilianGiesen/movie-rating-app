@@ -76,7 +76,7 @@
 }
 
 .movie-item {
-    @apply w-96 shrink-0 h-auto bg-white rounded-md flex flex-col items-center justify-start overflow-hidden shadow-2xl mr-8 mt-8;
+    @apply w-96 shrink-0 h-auto bg-white rounded-md flex flex-col items-center justify-start shadow-2xl mr-8 mt-8;
 }
 
 .movie-item-image-wrapper {
@@ -85,6 +85,10 @@
 
 .movie-item-image {
     @apply object-cover object-center h-[600px];
+}
+
+.movie-item-no-image {
+    @apply h-[520px] absolute z-0 inset-0 w-full bg-gray-500 flex items-center justify-center;
 }
 
 .movie-item-star-wrapper {
@@ -154,7 +158,6 @@
 .movie-item-star-icon {
     @apply h-5 w-5;
 }
-
 
 .movie-item-actions-list-wrapper {
     @apply group-hover:flex shrink-0 hidden items-center justify-end space-x-2;
